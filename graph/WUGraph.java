@@ -10,14 +10,14 @@ import list.*;
  */
 
 public class WUGraph {
-	int vertexCount; //This is all the vertices in the graph (n in hashtable);
-	int edgeCount; //This is all the edges in the graph 
+	int vertexCount; // this is all the vertices in the graph, which is n in hashtable
+	int edgeCount; // this is all the edges in the graph 
 	
 	HashTableChained vertexHashTable;
 	HashTableChained edgeHashTable;
 	
-	DList vertexList;  //consists of nodes of entries VertexNode
-	DList edgeList; //consists of nodes of entries EdgeNode
+	DList vertexList;  // DListNodes in the vertexList have VertexNode entries
+	DList edgeList; // DListNodes in the edgeList have EdgeNode entries
 
 	
   /**
@@ -26,7 +26,7 @@ public class WUGraph {
    * Running time:  O(1).
    */
   public WUGraph() {
-	  vertexHashTable = new HashTableChained(); //create a hashtable with 101 buckets (default constructor)
+	  vertexHashTable = new HashTableChained(); // create a hashtable with 101 buckets (default constructor)
 	  vertexList = new DList();
 	  
 	  vertexCount = 0;
@@ -63,19 +63,17 @@ public class WUGraph {
    *
    * Running time:  O(|V|).
    */
-  public Object[] getVertices(){
-	  Object[] verticesArray = new Object[vertexList.length()];
-	  DListNode pointer = (DListNode) vertexList.front();
+  public Object[] getVertices() {
+	  Object[] verticesArray = new Object[vertexList.length()]; // creates an array with the same length as vertexList
+
+	  try {
+	 	 DListNode pointer = (DListNode) vertexList.front(); // begin at the beginning of vertexList
 	  
-	  for(int i=0; i<vertexList.length();i++){
-		  try{
-			  verticesArray[i] = ((VertexNode) pointer.item()).getAppVertex();
-			  pointer = (DListNode) pointer.next();
-		  }catch (InvalidNodeException e){
-			  
-		  }
-		  
-	  }
+	  	for(int i = 0; i < vertexList.length(); i++) {
+		  verticesArray[i] = ((VertexNode) pointer.item()).getAppVertex(); // adds each vertex hashed into vertexList to the output array
+		  pointer = (DListNode) pointer.next();
+	  	} 			  
+	  } catch (InvalidNodeException e) {}
 	  return verticesArray;
   }
  
@@ -87,17 +85,17 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public void addVertex(Object vertex){
-	  if(!isVertex(vertex)){ //if it is not a vertex already, we can add it
-		  VertexNode newVertexNode = new VertexNode(vertex); //the item of DlistNode is a VertexNode
-		  vertexList.insertBack(newVertexNode); //insert a DlistNode into vertexList with VertexNode item
+  public void addVertex(Object vertex) {
+	  if(!isVertex(vertex)) { // if it is not a vertex already, we can add it
+		  VertexNode newVertexNode = new VertexNode(vertex); // the item of DListNode is a VertexNode
+		  vertexList.insertBack(newVertexNode); // insert a DListNode into vertexList with VertexNode item
 		  
-		  //Hash the vertex into correct bucket of the vertexHashTable and insert an Entry with the key=Object, value=DListNode that's part of your DList of vertices
-		  vertexHashTable.insert(vertex, vertexList.back()); 
+		  // hash the vertex into correct bucket of the vertexHashTable and insert an Entry with the key = Object, value = DListNode that's part of your DList of vertices
+		  vertexHashTable.insert(vertex, vertexList.back()); // pair .insertBack() with .back()
 		  vertexHashTable.resize();
 		  
 		  vertexCount++;
-	  }else{ //if this object is already a vertex of the graph, the graph is unchanged
+	  } else { //if this object is already a vertex of the graph, the graph is unchanged
 		  return;
 	  }
   }
@@ -109,30 +107,28 @@ public class WUGraph {
    *
    * Running time:  O(d), where d is the degree of "vertex".
    */
-  public void removeVertex(Object vertex){
-	  try{
-	  if(!isVertex(vertex)){
+  public void removeVertex(Object vertex) {
+	  try {
+	  if(!isVertex(vertex)) {
 		  return;
-	  }else{
+	  } else {
 		  vertexCount--;
 		  
 		  VertexNode vNode = (VertexNode) ((DListNode) vertexHashTable.find(vertex).value()).item();
 		  
-		  if(vNode.getDegreeCount()>0){ // remove any instance of the vertex in any edge
-			
+		  if(vNode.getDegreeCount() > 0) { // remove any instance of the vertex in any edge	
+
 			  DList edgeList = vNode.getEdgeList();
 			  DListNode pointer =  (DListNode) edgeList.front();
-			  while(pointer.isValidNode()){
-				  
-				  if(((EdgeNode) pointer.item()).getEdgeType() == EdgeNode.SELF){
+
+			  while(pointer.isValidNode()) {		  
+				  if(((EdgeNode) pointer.item()).getEdgeType() == EdgeNode.SELF) { // self edge case
 					  Object appVertex1 = ((VertexNode) ((EdgeNode) pointer.item()).getVertexOne().item()).getAppVertex();
 					  removeEdge(appVertex1, appVertex1);
-				  }else{
-					  
+				  } else { // non self edge case		  
 					  Object appVertex1 = ((VertexNode) ((EdgeNode)pointer.item()).getVertexOne().item()).getAppVertex();
 					  Object appVertex2 = ((VertexNode) ((EdgeNode) pointer.item()).getVertexTwo().item()).getAppVertex();
-					  removeEdge(appVertex1, appVertex2);
-					  
+					  removeEdge(appVertex1, appVertex2);					  
 				  }
 				  
 				  pointer = (DListNode) edgeList.front();
@@ -145,20 +141,19 @@ public class WUGraph {
 		  vertexHashTable.remove(vertex); //remove the vertex from the vertex Hashtable 
 		  
 	  }
-	  }catch(InvalidNodeException e){
-		  System.out.println("enter invalid node exception in remove vertex");
-	  }
+	  } catch(InvalidNodeException e) {}
   }
+
   /**
    * isVertex() returns true if the parameter "vertex" represents a vertex of
    * the graph.
    *
    * Running time:  O(1).
    */
-  public boolean isVertex(Object vertex){
-	  if(vertexHashTable.find(vertex)==null){
+  public boolean isVertex(Object vertex) {
+	  if(vertexHashTable.find(vertex) == null) {
 		  return false;
-	  }else{
+	  } else {
 		  return true;
 	  }
   }
@@ -170,15 +165,13 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public int degree(Object vertex){
+  public int degree(Object vertex) {
 	  int degreeCount = 0;
-	  try{
-		  if(isVertex(vertex)){ //if "vertex" is not a vertex of the graph, 0 is returned
+	  try {
+		  if(isVertex(vertex)) { //if "vertex" is not a vertex of the graph, 0 will be returned
 			  degreeCount = ((VertexNode) ((DListNode) vertexHashTable.find(vertex).value()).item()).getDegreeCount();
 		  }
-	  }catch (InvalidNodeException e){
-		  
-	  }
+	  } catch (InvalidNodeException e) {}
 	  
 	  return degreeCount;
   }
@@ -201,49 +194,55 @@ public class WUGraph {
    *
    * Running time:  O(d), where d is the degree of "vertex".
    */
-  public Neighbors getNeighbors(Object vertex){
-	  if(!isVertex(vertex)){
+  public Neighbors getNeighbors(Object vertex) {
+	  if(!isVertex(vertex)) {
 		  return null;
 	  }
 	  
 	  Neighbors vertexNeighbors = new Neighbors();
-	  try{
+	  
+	  try { 
+
+	  // get the VertexNode and degree counted associated with the given vertex
 	  VertexNode vertexNode = (VertexNode) ((DListNode) vertexHashTable.find(vertex).value()).item();
 	  int vertexDegreeCount = vertexNode.getDegreeCount();
 	  
+	  // create two empty arrays for the Neighbor class that have the same number of indices as the degree of the given vertex
 	  vertexNeighbors.neighborList = new Object[vertexDegreeCount];
 	  vertexNeighbors.weightList = new int[vertexDegreeCount];
 	  
-	  if(vertexDegreeCount == 0){ //If the vertex has no edges, then we return null 
+	  if(vertexDegreeCount == 0) { // if the vertex has no edges, then we return null 
 		  return null;
 	  }
 	  
+	  // loop through edges of the given vertex
 	  DListNode pointer = (DListNode) vertexNode.getEdgeList().front();
-	  for(int i=0; i<vertexDegreeCount;i++){
+
+	  for(int i = 0; i < vertexDegreeCount; i++) {
 		
 		 EdgeNode edgeNode = (EdgeNode) pointer.item();
-		 vertexNeighbors.weightList[i] =  edgeNode.getWeight();
-		 if(edgeNode.getEdgeType() == EdgeNode.SELF){
+
+		 vertexNeighbors.weightList[i] =  edgeNode.getWeight(); // set the weightList
+
+		 // set the neighborList
+		 if(edgeNode.getEdgeType() == EdgeNode.SELF) { // self edge case
 			 Object appVertex1 = ((VertexNode) edgeNode.getVertexOne().item()).getAppVertex();
 			 vertexNeighbors.neighborList[i] =  appVertex1;
-		 }else{
+		 } else { // non self edge case
 			 Object appVertex1 = ((VertexNode) edgeNode.getVertexOne().item()).getAppVertex();
 			 Object appVertex2 = ((VertexNode) edgeNode.getVertexTwo().item()).getAppVertex();
-			 if(!appVertex1.equals(vertex)){
+			 // make sure we're adding the vertex's neighbor, and not itself
+			 if(!appVertex1.equals(vertex)) {
 				 vertexNeighbors.neighborList[i] = appVertex1;
-			 }else if(!appVertex2.equals(vertex)){
+			 } else if(!appVertex2.equals(vertex)) {
 				 vertexNeighbors.neighborList[i] = appVertex2;
-			 }else{
-				 System.out.println("tried to get the neighbors of a vertex and accessed a wrong edge");
 			 }
 		 }
 		 pointer = (DListNode) pointer.next();
 				  
 	  }
 	  return vertexNeighbors;
-	  }catch (InvalidNodeException e){
-		  
-	  }
+	  } catch (InvalidNodeException e) {}
 	  
 	  return vertexNeighbors;
   }
@@ -257,16 +256,17 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public void addEdge(Object u, Object v, int weight){
-	  try{
-	  if(!isVertex(u) || !isVertex(v)){ //graph is unchanged if neither vertices are in the graph
+  public void addEdge(Object u, Object v, int weight) {
+	  try {
+	  if(!isVertex(u) || !isVertex(v)) { // graph is unchanged if neither vertices are in the graph
 		  return; 
-	  }else{ 
-		  if (edgeHashTable == null) { //initialize the edgeHashTable when adding the first edge 
+	  } else { 
+		  if (edgeHashTable == null) { // initialize the edgeHashTable when adding the first edge 
 			  edgeHashTable = new HashTableChained();
 		  }
+
 		  VertexPair edgeVertexPair = new VertexPair(u,v);
-		  if(isEdge(u,v)){ //if the edge already exists in the hashtable
+		  if(isEdge(u,v) ){ //if the edge already exists in the hashtable
 			  if(u.equals(v)){ //if it is a self-edge
 				  ((EdgeNode) ((DListNode) edgeHashTable.find(edgeVertexPair).value()).item()).setWeight(weight);
 			  }else{
@@ -276,36 +276,36 @@ public class WUGraph {
 			  }
 		  }else{ //if the edge does not exist in the hashtable;
 			  edgeCount++;
-			  if(u.equals(v)){
-				  DListNode vertexDListNode = (DListNode) vertexHashTable.find(u).value();
-				  EdgeNode edgeNode = new EdgeNode(weight,vertexDListNode);
-				  ((VertexNode) vertexDListNode.item()).addEdgeNode(edgeNode);
+			  if(u.equals(v)) { // self edge case
+				  DListNode vertexDListNode = (DListNode) vertexHashTable.find(u).value(); // find vertex from vertexHashTable
 
-				  edgeHashTable.insert(edgeVertexPair, ((VertexNode) vertexDListNode.item()).getEdgeList().back());
-				  edgeHashTable.resize();
-			  }else{
+				  EdgeNode edgeNode = new EdgeNode(weight,vertexDListNode); // self edge constructor
+
+				  ((VertexNode) vertexDListNode.item()).addEdgeNode(edgeNode); // add edge to edgeList
+
+				  edgeHashTable.insert(edgeVertexPair, ((VertexNode) vertexDListNode.item()).getEdgeList().back()); // hash edge
+				  edgeHashTable.resize(); // check to see if hash table needs to be resized
+			  } else { // non self-edge case
 				  DListNode vertexDListNode1 = (DListNode) vertexHashTable.find(u).value();
-				  DListNode vertexDListNode2 = (DListNode) vertexHashTable.find(v).value();
+				  DListNode vertexDListNode2 = (DListNode) vertexHashTable.find(v).value(); // find vertices from hashtable
 				  
 				  EdgeNode edgeNode1 = new EdgeNode(weight,vertexDListNode1, vertexDListNode2);
-				  EdgeNode edgeNode2 = new EdgeNode(weight,vertexDListNode2, vertexDListNode1);
+				  EdgeNode edgeNode2 = new EdgeNode(weight,vertexDListNode2, vertexDListNode1); // non self edge constructor
 		
 				  
 				  ((VertexNode) vertexDListNode1.item()).addEdgeNode(edgeNode1);
-				  ((VertexNode) vertexDListNode2.item()).addEdgeNode(edgeNode2);
+				  ((VertexNode) vertexDListNode2.item()).addEdgeNode(edgeNode2); // add edge into both vertices' edgeLists
 				  
 				  edgeNode1.setPartnerEdge((DListNode) ((VertexNode)vertexDListNode2.item()).getEdgeList().back());
-				  edgeNode2.setPartnerEdge((DListNode) ((VertexNode)vertexDListNode1.item()).getEdgeList().back());
+				  edgeNode2.setPartnerEdge((DListNode) ((VertexNode)vertexDListNode1.item()).getEdgeList().back()); // set partners pointers for each vertex of the edge
 				  
-				  edgeHashTable.insert(edgeVertexPair, ((VertexNode) vertexDListNode1.item()).getEdgeList().back());
-				  edgeHashTable.resize();
+				  edgeHashTable.insert(edgeVertexPair, ((VertexNode) vertexDListNode1.item()).getEdgeList().back()); // hash edge
+				  edgeHashTable.resize(); // check to see if hash table needs to be resized
 			  }
 		  }
 	  }
 	
-	  }catch(InvalidNodeException e){
-		  
-	  }
+	  } catch(InvalidNodeException e){}
 	  
   }
 
@@ -318,42 +318,41 @@ public class WUGraph {
    * Running time:  O(1).
    */
   public void removeEdge(Object u, Object v){
-	  try{
-	  if(!isEdge(u,v)){
+	  try {
+	  if(!isEdge(u,v)) {
 		  return;
-	  }else{
+	  } else {
 		  edgeCount--;
 		  VertexPair edgeVertexPair = new VertexPair(u,v);
-		  if(!u.equals(v)){ //not a self-edge
+		  if(!u.equals(v)){ // non self edge case
 			  DListNode edgeDListNode = (DListNode) edgeHashTable.find(edgeVertexPair).value();
 			  DListNode partnerEdgeDListNode = ((EdgeNode) edgeDListNode.item()).getPartnerEdge();
 			  
 			  int vertex1Degree = ((VertexNode) ((EdgeNode) edgeDListNode.item()).getVertexOne().item()).getDegreeCount();
 			  int vertex2Degree = ((VertexNode) ((EdgeNode) edgeDListNode.item()).getVertexTwo().item()).getDegreeCount();
 			  
-			  //decrease the degree count of each vertex of the edge 
+			  // decrease the degree count of each vertex of the edge 
 			  ((VertexNode) ((EdgeNode) edgeDListNode.item()).getVertexOne().item()).setDegreeCount(vertex1Degree-1);
 			  ((VertexNode) ((EdgeNode) edgeDListNode.item()).getVertexTwo().item()).setDegreeCount(vertex2Degree-1);
 			  
 			  
-			  edgeDListNode.remove(); //remove DListNode in the edgelist 
-			  partnerEdgeDListNode.remove(); //remove its partner
-			  edgeHashTable.remove(edgeVertexPair); //remove from hash table
+			  edgeDListNode.remove(); // remove DListNode from the edgelist 
+			  partnerEdgeDListNode.remove(); // remove its partner
+			  edgeHashTable.remove(edgeVertexPair); // remove from hash table
 			  
-		  }else{ //it is a self-edge
+		  } else { // self edge case
 			  DListNode edgeDListNode = (DListNode) edgeHashTable.find(edgeVertexPair).value();
 			  
+			  // decrease the degree count of the vertex
 			  int vertex1Degree = ((VertexNode) ((EdgeNode) edgeDListNode.item()).getVertexOne().item()).getDegreeCount();
 			  ((VertexNode) ((EdgeNode) edgeDListNode.item()).getVertexOne().item()).setDegreeCount(vertex1Degree-1);
 			  
-			  edgeDListNode.remove(); //remove DListNode in the edgelist 
-			  edgeHashTable.remove(edgeVertexPair); //remove from hash table
+			  edgeDListNode.remove(); // remove DListNode from the edgeList 
+			  edgeHashTable.remove(edgeVertexPair); // remove from hash table
 			  
 		  }
 	  }
-	  }catch(InvalidNodeException e){
-		  
-	  }
+	  } catch(InvalidNodeException e) {}
   }
 
   /**
@@ -363,16 +362,16 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public boolean isEdge(Object u, Object v){
+  public boolean isEdge(Object u, Object v) {
 	  VertexPair edgeVertexPair = new VertexPair(u,v);
-	  if (edgeCount() == 0) {
+	  if (edgeCount() == 0) { // if there are no edges in the WUGraph, (u,v) is certainly not an edge
 		  return false;
 	  }
-	  if(edgeHashTable.find(edgeVertexPair) != null){
+	  if(edgeHashTable.find(edgeVertexPair) != null) {
 		  return true;
-	  }if(!isVertex(u) || !isVertex(v)){
+	  } if(!isVertex(u) || !isVertex(v)) {
 		  return false;
-	  }else{
+	  } else {
 		  return false;
 	  }
 	  
@@ -392,18 +391,15 @@ public class WUGraph {
    *
    * Running time:  O(1).
    */
-  public int weight(Object u, Object v){
+  public int weight(Object u, Object v) {
 	  int weight = 0;
-	  try{
-	  if(isEdge(u,v)){		 
+	  try {
+	  if(isEdge(u,v)) {	 
 		  VertexPair edgeVertexPair = new VertexPair(u,v);
 		  weight = ((EdgeNode) ((DListNode) edgeHashTable.find(edgeVertexPair).value()).item()).getWeight();
 	  }
-	  }catch(InvalidNodeException e){
-		  
-	  }
-	  return weight;
-	  
-
+	  } catch(InvalidNodeException e) {}
+	  return weight;	  
 }
+
 }
