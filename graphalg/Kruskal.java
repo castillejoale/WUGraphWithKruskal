@@ -63,8 +63,11 @@ public class Kruskal {
     
     //Insert the vertices in the hashtable. The hashCode will be its position in
     // the verticesList list.
-    for(int i = 0; i < t.vertexCount(); i++){
-      hashTable.insert(i, verticesList[i]);
+    int index = 0;
+
+    for (Object v : verticesList){
+      hashTable.insert(v, index);
+      index++;
     }
 
     //Iterate over the edges in the queue, adding them if the vertices of the edge
@@ -74,8 +77,8 @@ public class Kruskal {
         Edge ed = (Edge) queue.dequeue();
         Object vertex1 = ed.getVertex1();
         Object vertex2 = ed.getVertex2();
-        int v1 = find(vertex1, verticesList);
-        int v2 = find(vertex2, verticesList);
+        int v1 = (Integer) hashTable.find(vertex1).value();
+        int v2 = (Integer) hashTable.find(vertex2).value();
         if (ds.find(v1) == ds.find(v2)){
         } else {
           t.addEdge(ed.getVertex1(), ed.getVertex2(), ed.getWeight());
@@ -173,25 +176,6 @@ public class Kruskal {
 
     return newQ;
     
-  }
-
-	  /**
-   *  find() looks for the position on the verticesList of each vertex used
-   * to hashCode
-   *  @param u is vertex
-   *  @param verticesList is list of vertices
-   *  @return position of the vertex u in the array verticesList
-   **/
-  private static int find(Object u, Object[] verticesList){
-
-    for(int i = 0; i < verticesList.length;i++){
-      if(u == verticesList[i]){
-        return i;
-      }
-    }
-
-    return -1;
-
   }
 
 }

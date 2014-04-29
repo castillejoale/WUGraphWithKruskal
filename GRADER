@@ -25,7 +25,7 @@ Data Structures:
 
 		B. SListNode
 
-		Directly used without the need of the class SList. Used by LinkedQueue 			where the queues in the queue are represented as SListNodes
+		Directly used without the need of the class SList. Used by LinkedQueue 			where the queues in the queue are represented as SListNodes.
 
 	
 	2. Dictionary - HashTableChained
@@ -34,19 +34,40 @@ Data Structures:
 
 	The vertexHashTable is initialized in the WUGraph constructor.  To insert into the 	vertexHashTable, we enter the key, which is the Object vertex that is the input of 	the addVertex() method, and the value, which is the internal representation of the 	vertex, found in the vertexList.
 
-	The edgeHashTable is initialized in the addEdge() method.  If the edgeHashTable is 	null when addEdge() is called, that means the graph currently does not have edges, 	and a new HashTableChained object, edgeHashTable, is initialized.  To insert into 	the edgeHashTable, we enter the key, which is an object of the VertexPair class, 	created using the two vertex Objects received in the input, and the value, which 	is the internal representation of the edge, found in the edgeList for either of 	the vertices that make up the edge (we default to "vertexDListNode1").
+	The edgeHashTable is initialized in the addEdge() method.  If the edgeHashTable is 	null when addEdge() is called, that means the graph currently does not have edges, 	and a new HashTableChained object, edgeHashTable, is initialized. To insert into 	the edgeHashTable, we enter the key, which is an object of the VertexPair class, 	created using the two vertex Objects received in the input, and the value, which 	is the internal representation of the edge, found in the edgeList for either of 	the vertices that make up the edge (we default to "vertexDListNode1").
 
 	We added a new method to HashTabledChained called resize().  We call resize() 		after every insert() call to either hash table.  This method resizes the hash 		table when the load factor exceeds 0.75.
+
+	HashTableChained is also used in Kruskal algorithm. This hash table will contain 	keys made of vertices and values equal to the index of each vertex in the vertices 	list. This hashTable is able to assign values of to v - 1 to each vertex in order 	to facilitate the use of Disjoint sets.
 
 	3. Queue - LinkedQueue
 
 	The LinkedQueue is used when we want to create a queue of queues. Used in Kruskal 	algorithm to separate different queues linked by edges that are in different sets.
 
-	It contains: size(), isEmpty(), enqueue(), dequeue(), front(), nth(), append(), 	toString(). Each of the methods described in the LinkedQueue file.
+	It contains:
+	size(), returning the size of the queue
+	isEmpty(), checks if the queue is empty
+	enqueue(), adding an element to the end of the queue
+	dequeue(), deleting and returning the front element of the queue
+	front(), returns the front() element of the queue
+	nth(), returns the nth() element of the queue
+	append(), appends two queues together
+	toString(), helper method that returns the queue as a string
+
+	4. Disjoint set
+
+	This data structure is used to implement Kruskal algorithm in minSpanTree(). It is 	used to avoid adding edges whose vertices are in the same set.
+
+	It contains:
+	DisjointSets(), constructor of the disjoint set
+	union(), whose function is to unite two sets.
+	find(), which returns the root of an element in a set. 
 
 
 
 Design Decisions:
+
+Part I
 
 Our implementation of WUGraph very close imitates the pj3graph diagram given to us to complement the readme.  We have two hash tables, one for vertices, and one for edges.  We have a DList that holds all the vertices, and each vertex has an adjacency DList that holds its edge.  We create partner references for non self edges. Each edge has references that point to its internal representation of the vertices creating that edge, and each vertex has a reference pointing to its external vertex Object.
 
@@ -54,5 +75,7 @@ To get removeVertex() to run in O(d) time, we create a loop that accesses the ad
 
 To make getVertices() running in O(|V|) time, we create an object array of the size of the vertexList, that will ultimately be the output.  Then, we loop through the vertex DList and access the Objects that correspond with each vertex, and add them to the output array.  Creating the object array is a constant time process, so this method is only dependent on the size of the vertex DList, which is equal to the number of vertices in the WUGraph.
 
-Our implementation of Kruskal.java contains minSpanTree() running in O(|V| + |E| log |E|) time. We first create an empty tree without edges. Then we make a list of object of the Class Edge and sort this list from minimum to maximum weight of each edge using the mergesort algorithm. Finally we create a disjoint set and we start only adding the edges, from minimum to maximum weight, which two vertices belong to different sets.
+Part II
+
+Our implementation of Kruskal.java contains minSpanTree(). We first create an empty tree without all the edges this operation takes O(|V|). Then we make a list of objects of the Class Edge, O(|E|), and sort this list from minimum to maximum weight of each edge using the mergesort algorithm, which runs in O(|E| log |E|). Finally we create a disjoint set (O(|V|)) and we start only adding the edges, from minimum to maximum weight, whose two vertices belong to different sets. This step takes at most O(|E|). Therefore the complete algorithm runs in O(|V| + |E| log |E|) time.
 
