@@ -40,7 +40,7 @@ Data Structures:
 
 	3. Queue - LinkedQueue
 
-	The LinkedQueue is used when we want to create a queue of queues. Used in Kruskal 	algorithm to separate diffent queues linked by edges that are in different sets.
+	The LinkedQueue is used when we want to create a queue of queues. Used in Kruskal 	algorithm to separate different queues linked by edges that are in different sets.
 
 	It contains: size(), isEmpty(), enqueue(), dequeue(), front(), nth(), append(), 	toString(). Each of the methods described in the LinkedQueue file.
 
@@ -54,5 +54,5 @@ To get removeVertex() to run in O(d) time, we create a loop that accesses the ad
 
 To make getVertices() running in O(|V|) time, we create an object array of the size of the vertexList, that will ultimately be the output.  Then, we loop through the vertex DList and access the Objects that correspond with each vertex, and add them to the output array.  Creating the object array is a constant time process, so this method is only dependent on the size of the vertex DList, which is equal to the number of vertices in the WUGraph.
 
-Our implementation of Kruskal.java contains minSpanTree() running in O(|V| + |E| log |E|) time. We first create an empty tree without edges. Then we make a list of object of the Class Edge and sort this list from minimum to maximum weight of each edge using the mergesort algorithm. Finally we create a disjoint set and we start only adding the edges, from minimun to maximum weight, which two vertices belong to different sets.
+Our implementation of Kruskal.java contains minSpanTree() running in O(|V| + |E| log |E|) time. We first create an empty tree without edges. Then we make a list of object of the Class Edge and sort this list from minimum to maximum weight of each edge using the mergesort algorithm. Finally we create a disjoint set and we start only adding the edges, from minimum to maximum weight, which two vertices belong to different sets.
 
